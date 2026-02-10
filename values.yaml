@@ -1,0 +1,50 @@
+replicaCount: 1
+
+backend:
+  image:
+    repository: huythai855/image-backend
+    pullPolicy: IfNotPresent
+    tag: "latest"
+  service:
+    type: ClusterIP
+    port: 8002
+  env:
+    YOLO_MODEL: "yolo11n.pt"
+    SAM_MODEL: "FastSAM-s.pt"
+    DETECTION_CONF: "0.25"
+    TEMP_DIR: "/app/temp"
+  resources:
+    limits:
+      cpu: 1000m
+      memory: 2Gi
+    requests:
+      cpu: 500m
+      memory: 1Gi
+
+frontend:
+  image:
+    repository: huythai855/image-frontend
+    pullPolicy: IfNotPresent
+    tag: "latest"
+  service:
+    type: LoadBalancer
+    port: 7862
+  env: {}
+  resources:
+    limits:
+      cpu: 500m
+      memory: 1Gi
+    requests:
+      cpu: 200m
+      memory: 512Mi
+
+ingress:
+  enabled: false
+  className: ""
+  annotations: {}
+  hosts:
+    - host: image-detection.local
+      paths:
+        - path: /
+          pathType: ImplementationSpecific
+  tls: []
