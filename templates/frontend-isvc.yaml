@@ -10,12 +10,20 @@ metadata:
 spec:
   predictor:
     containers:
-      - name: frontend
+      - name: kserve-container # Nên đổi tên thành kserve-container để chuẩn hóa với KServe
         image: "{{ .Values.kserveFrontend.image.repository }}:{{ .Values.kserveFrontend.image.tag }}"
         imagePullPolicy: {{ .Values.kserveFrontend.image.pullPolicy }}
         ports:
           - containerPort: {{ .Values.kserveFrontend.containerPort }}
             name: http1
+            protocol: TCP
+        # Thêm phần này để fix lỗi "quay quay"
+        readinessProbe:
+          tcpSocket:
+            port: {{ .Values.kserveFrontend.containerPort }}
+          initialDelaySeconds: 15  # Đợi 15s để app khởi động rồi mới check
+          periodSeconds: 10        # Check mỗi 10s một lần
+          failureThreshold: 3      # Thử lại 3 lần mới báo fail
         env:
           - name: BACKEND_URL
             value: 'http://{{ include "image-detection-pipeline.fullname" . }}-backend:{{ .Values.backend.service.port }}'
