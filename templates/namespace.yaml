@@ -1,0 +1,9 @@
+{{- if .Values.namespaceCreate }}
+apiVersion: v1
+kind: Namespace
+metadata:
+  name: {{ include "image-detection-pipeline.namespace" . }}
+  labels:
+    {{- include "image-detection-pipeline.labels" . | nindent 4 }}
+{{- end }}
+

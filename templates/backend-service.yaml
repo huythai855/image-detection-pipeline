@@ -1,7 +1,9 @@
+{{- if not .Values.kserve.enabled }}
 apiVersion: v1
 kind: Service
 metadata:
   name: {{ include "image-detection-pipeline.fullname" . }}-backend
+  namespace: {{ include "image-detection-pipeline.namespace" . }}
   labels:
     {{- include "image-detection-pipeline.labels" . | nindent 4 }}
     component: backend
@@ -15,3 +17,4 @@ spec:
   selector:
     {{- include "image-detection-pipeline.selectorLabels" . | nindent 4 }}
     component: backend
+{{- end }}

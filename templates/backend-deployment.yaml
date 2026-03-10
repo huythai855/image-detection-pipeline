@@ -1,7 +1,9 @@
+{{- if not .Values.kserve.enabled }}
 apiVersion: apps/v1
 kind: Deployment
 metadata:
   name: {{ include "image-detection-pipeline.fullname" . }}-backend
+  namespace: {{ include "image-detection-pipeline.namespace" . }}
   labels:
     {{- include "image-detection-pipeline.labels" . | nindent 4 }}
     component: backend
@@ -48,3 +50,4 @@ spec:
           emptyDir: {}
         - name: temp-storage
           emptyDir: {}
+{{- end }}

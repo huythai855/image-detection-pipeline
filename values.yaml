@@ -1,5 +1,8 @@
 replicaCount: 1
 
+namespace: ""
+namespaceCreate: true
+
 backend:
   image:
     repository: huythai855/image-backend
@@ -48,3 +51,22 @@ ingress:
         - path: /
           pathType: ImplementationSpecific
   tls: []
+
+# Deploy backend via KServe InferenceService instead of Deployment/Service.
+# Requires KServe installed in the cluster.
+kserve:
+  enabled: false
+  serviceName: "image-detection-backend"
+  containerPort: 8002
+  image:
+    repository: huythai855/image-backend
+    tag: "latest"
+    pullPolicy: IfNotPresent
+  # KServe expects standard k8s resources fields (requests/limits).
+  resources:
+    limits:
+      cpu: 1000m
+      memory: 2Gi
+    requests:
+      cpu: 500m
+      memory: 1Gi

@@ -2,6 +2,7 @@ apiVersion: apps/v1
 kind: Deployment
 metadata:
   name: {{ include "image-detection-pipeline.fullname" . }}-frontend
+  namespace: {{ include "image-detection-pipeline.namespace" . }}
   labels:
     {{- include "image-detection-pipeline.labels" . | nindent 4 }}
     component: frontend
@@ -27,6 +28,6 @@ spec:
               protocol: TCP
           env:
             - name: BACKEND_URL
-              value: "http://{{ include "image-detection-pipeline.fullname" . }}-backend:{{ .Values.backend.service.port }}"
+              value: "{{ ternary (printf "http://%s.%s.svc.cluster.local:%v" .Values.kserve.serviceName (include "image-detection-pipeline.namespace" .) .Values.kserve.containerPort) (printf "http://%s-backend:%v" (include "image-detection-pipeline.fullname" .) .Values.backend.service.port) .Values.kserve.enabled }}"
           resources:
             {{- toYaml .Values.frontend.resources | nindent 12 }}

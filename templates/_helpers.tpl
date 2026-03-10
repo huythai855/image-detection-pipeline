@@ -24,6 +24,15 @@ If release name contains chart name it will be used as a full name.
 {{- end }}
 
 {{/*
+Resolve target namespace.
+- Prefer .Values.namespace when set (so chart can create/use a dedicated namespace).
+- Fallback to the Helm/ArgoCD destination namespace (.Release.Namespace).
+*/}}
+{{- define "image-detection-pipeline.namespace" -}}
+{{- default .Release.Namespace .Values.namespace -}}
+{{- end }}
+
+{{/*
 Create chart name and version as used by the chart label.
 */}}
 {{- define "image-detection-pipeline.chart" -}}
