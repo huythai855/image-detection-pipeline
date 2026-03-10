@@ -1,6 +1,6 @@
 replicaCount: 1
 
-namespace: ""
+namespace: "image-detection-backend"
 namespaceCreate: true
 
 backend:
@@ -55,7 +55,7 @@ ingress:
 # Deploy backend via KServe InferenceService instead of Deployment/Service.
 # Requires KServe installed in the cluster.
 kserve:
-  enabled: false
+  enabled: true
   serviceName: "image-detection-backend"
   containerPort: 8002
   image:
