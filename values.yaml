@@ -30,7 +30,7 @@ frontend:
     pullPolicy: IfNotPresent
     tag: "latest"
   service:
-    type: LoadBalancer
+    type: ClusterIP
     port: 7862
   env: {}
   resources:
@@ -52,21 +52,20 @@ ingress:
           pathType: ImplementationSpecific
   tls: []
 
-# Deploy backend via KServe InferenceService instead of Deployment/Service.
-# Requires KServe installed in the cluster.
-kserve:
+# Expose frontend publicly via KServe InferenceService.
+# Backend + frontend still communicate internally via ClusterIP service.
+kserveFrontend:
   enabled: true
-  serviceName: "image-detection-backend"
-  containerPort: 8002
+  serviceName: "image-detection-frontend"
+  containerPort: 7862
   image:
-    repository: huythai855/image-backend
+    repository: huythai855/image-frontend
     tag: "latest"
     pullPolicy: IfNotPresent
-  # KServe expects standard k8s resources fields (requests/limits).
   resources:
     limits:
-      cpu: 1000m
-      memory: 2Gi
-    requests:
       cpu: 500m
       memory: 1Gi
+    requests:
+      cpu: 200m
+      memory: 512Mi

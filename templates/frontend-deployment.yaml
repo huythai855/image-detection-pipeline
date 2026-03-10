@@ -28,6 +28,6 @@ spec:
               protocol: TCP
           env:
             - name: BACKEND_URL
-              value: "{{ ternary (printf "http://%s.%s.svc.cluster.local:%v" .Values.kserve.serviceName (include "image-detection-pipeline.namespace" .) .Values.kserve.containerPort) (printf "http://%s-backend:%v" (include "image-detection-pipeline.fullname" .) .Values.backend.service.port) .Values.kserve.enabled }}"
+              value: 'http://{{ include "image-detection-pipeline.fullname" . }}-backend:{{ .Values.backend.service.port }}'
           resources:
             {{- toYaml .Values.frontend.resources | nindent 12 }}

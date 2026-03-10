@@ -1,0 +1,25 @@
+{{- if .Values.kserveFrontend.enabled }}
+apiVersion: serving.kserve.io/v1beta1
+kind: InferenceService
+metadata:
+  name: {{ .Values.kserveFrontend.serviceName }}
+  namespace: {{ include "image-detection-pipeline.namespace" . }}
+  labels:
+    {{- include "image-detection-pipeline.labels" . | nindent 4 }}
+    component: frontend
+spec:
+  predictor:
+    containers:
+      - name: frontend
+        image: "{{ .Values.kserveFrontend.image.repository }}:{{ .Values.kserveFrontend.image.tag }}"
+        imagePullPolicy: {{ .Values.kserveFrontend.image.pullPolicy }}
+        ports:
+          - containerPort: {{ .Values.kserveFrontend.containerPort }}
+            name: http1
+        env:
+          - name: BACKEND_URL
+            value: 'http://{{ include "image-detection-pipeline.fullname" . }}-backend:{{ .Values.backend.service.port }}'
+        resources:
+          {{- toYaml .Values.kserveFrontend.resources | nindent 10 }}
+{{- end }}
+
