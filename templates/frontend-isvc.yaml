@@ -21,9 +21,9 @@ spec:
         readinessProbe:
           tcpSocket:
             port: {{ .Values.kserveFrontend.containerPort }}
-          initialDelaySeconds: 15  # Đợi 15s để app khởi động rồi mới check
-          periodSeconds: 10        # Check mỗi 10s một lần
-          failureThreshold: 3      # Thử lại 3 lần mới báo fail
+          initialDelaySeconds: 15  
+          periodSeconds: 10    
+          failureThreshold: 3    
         env:
           - name: BACKEND_URL
             value: 'http://{{ include "image-detection-pipeline.fullname" . }}-backend:{{ .Values.backend.service.port }}'
