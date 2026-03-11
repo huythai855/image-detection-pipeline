@@ -7,7 +7,7 @@ backend:
   image:
     repository: huythai855/image-backend
     pullPolicy: IfNotPresent
-    tag: "v2"
+    tag: "latest"
   service:
     type: ClusterIP
     port: 8002
