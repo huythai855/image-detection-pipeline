@@ -27,7 +27,7 @@ frontend:
     pullPolicy: IfNotPresent
     tag: "latest"
   service:
-    type: LoadBalancer
+    type: ClusterIP
     port: 7862
   env: {}
   resources:
@@ -48,3 +48,8 @@ ingress:
         - path: /
           pathType: ImplementationSpecific
   tls: []
+
+istio:
+  enabled: true
+  host: image-detection.ml.example.com
+  gateway: knative-serving/knative-ingress-gateway
