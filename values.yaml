@@ -1,18 +1,25 @@
 replicaCount: 1
 
+fullnameOverride: idp
+nameOverride: idp
+
+kserve:
+  enabled: true
+
 backend:
   image:
     repository: huythai855/image-backend
     pullPolicy: IfNotPresent
     tag: "latest"
-  service:
-    type: ClusterIP
-    port: 8002
+
+  port: 8002
+
   env:
     YOLO_MODEL: "yolo11n.pt"
     SAM_MODEL: "FastSAM-s.pt"
     DETECTION_CONF: "0.25"
     TEMP_DIR: "/app/temp"
+
   resources:
     limits:
       cpu: 1000m
@@ -21,15 +28,23 @@ backend:
       cpu: 500m
       memory: 1Gi
 
+  autoscaling:
+    minReplicas: 0
+    maxReplicas: 3
+    targetConcurrency: 1
+
 frontend:
   image:
     repository: huythai855/image-frontend
     pullPolicy: IfNotPresent
     tag: "latest"
+
   service:
     type: ClusterIP
     port: 7862
+
   env: {}
+
   resources:
     limits:
       cpu: 500m
@@ -38,18 +53,7 @@ frontend:
       cpu: 200m
       memory: 512Mi
 
-ingress:
-  enabled: false
-  className: ""
-  annotations: {}
-  hosts:
-    - host: image-detection.local
-      paths:
-        - path: /
-          pathType: ImplementationSpecific
-  tls: []
-
 istio:
   enabled: true
-  host: image-detection.ml.example.com
+  host: image-detection.ml.vts-ai.space
   gateway: knative-serving/knative-ingress-gateway

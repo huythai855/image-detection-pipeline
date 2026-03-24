@@ -27,6 +27,6 @@ spec:
               protocol: TCP
           env:
             - name: BACKEND_URL
-              value: "http://{{ include "image-detection-pipeline.fullname" . }}-backend:{{ .Values.backend.service.port }}"
+              value: "http://{{ include "image-detection-pipeline.fullname" . }}-backend-predictor.{{ .Release.Namespace }}.svc.cluster.local"
           resources:
             {{- toYaml .Values.frontend.resources | nindent 12 }}

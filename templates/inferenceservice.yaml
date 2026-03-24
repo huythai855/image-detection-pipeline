@@ -1,0 +1,29 @@
+{{- if .Values.kserve.enabled }}
+apiVersion: serving.kserve.io/v1beta1
+kind: InferenceService
+metadata:
+  name: {{ include "image-detection-pipeline.fullname" . }}-backend
+spec:
+  predictor:
+    minReplicas: {{ .Values.backend.autoscaling.minReplicas }}
+    maxReplicas: {{ .Values.backend.autoscaling.maxReplicas }}
+    scaleTarget: {{ .Values.backend.autoscaling.targetConcurrency }}
+    containers:
+      - name: backend
+        image: "{{ .Values.backend.image.repository }}:{{ .Values.backend.image.tag }}"
+        ports:
+          - containerPort: {{ .Values.backend.port }}
+        env:
+          - name: PYTHONUNBUFFERED
+            value: "1"
+          - name: YOLO_MODEL
+            value: {{ .Values.backend.env.YOLO_MODEL | quote }}
+          - name: SAM_MODEL
+            value: {{ .Values.backend.env.SAM_MODEL | quote }}
+          - name: DETECTION_CONF
+            value: {{ .Values.backend.env.DETECTION_CONF | quote }}
+          - name: TEMP_DIR
+            value: {{ .Values.backend.env.TEMP_DIR | quote }}
+        resources:
+          {{- toYaml .Values.backend.resources | nindent 10 }}
+{{- end }}
